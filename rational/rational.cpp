@@ -1,7 +1,7 @@
 ﻿// rational.cpp : Defines the entry point for the application.
 //
 
-#include "rational.h"
+#include "rational.hpp"
 
 using namespace std;
 
