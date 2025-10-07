@@ -3,7 +3,7 @@
 #
 
 # Add source to this project's executable.
-add_executable (rational "rational.cpp" "rational.hpp")
+add_executable (rational "../temp/rational.cpp" "rational.hpp")
 
 target_link_libraries(rational "gtest_main")
 
