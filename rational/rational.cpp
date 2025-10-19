@@ -32,9 +32,12 @@ int Rational::den() const
 
 void Rational::den(int denominator)
 {
+	int common_factor;
 	if (denominator != 0)
 	{
-		_den = denominator / GCF(_num, denominator);
+		common_factor = GCF(_num, denominator);
+		_den = denominator / common_factor;
+		_num /= common_factor;
 	}
 	else
 	{
@@ -136,7 +139,7 @@ Rational Rational::operator=(Rational value)
 	return *this;
 }
 
-Rational Rational::operator +=(Rational& addEqual)
+Rational& Rational::operator +=(Rational& addEqual)
 {
 	Rational lhs;
 	lhs.num(_num);
@@ -146,7 +149,7 @@ Rational Rational::operator +=(Rational& addEqual)
 	return lhs;
 }
 
-Rational Rational::operator -=(Rational& subEqual)
+Rational& Rational::operator -=(Rational& subEqual)
 {
 	Rational lhs;
 	lhs.num(_num);
@@ -156,7 +159,7 @@ Rational Rational::operator -=(Rational& subEqual)
 	return lhs;
 }
 
-Rational Rational::operator *=(Rational& multEqual)
+Rational& Rational::operator *=(Rational& multEqual)
 {
 	Rational lhs;
 	lhs.num(_num);
@@ -166,7 +169,7 @@ Rational Rational::operator *=(Rational& multEqual)
 	return lhs;
 }
 
-Rational Rational::operator/=(Rational& divEqual)
+Rational& Rational::operator/=(Rational& divEqual)
 {
 	Rational lhs;
 	lhs.num(_num);
@@ -187,26 +190,32 @@ void Rational::decrement()
 Rational& Rational::operator ++()
 {
 	increment();
+	return *this;
 }
 
 Rational& Rational::operator --()
 {
 	decrement();
+	return *this;
 }
 
 Rational Rational::operator ++(int)
 {
+	Rational copy = *this;
 	increment();
+	return copy;
 }
 
 Rational Rational::operator --(int)
 {
+	Rational copy = *this;
 	decrement();
+	return copy;
 }
 
-Rational::Rational(int value) : _num{ value }, _den{ 1 }{}
+Rational::Rational(int value) : Rational(value , 1){}
 
-Rational::Rational(double value) : _num{ value * doubleBase }, _den{ doubleBase }{}
+Rational::Rational(double value) : Rational( value * doubleBase, doubleBase ){}
 
 Rational::operator int() const
 {
@@ -251,8 +260,14 @@ std::strong_ordering Rational::operator<=>(Rational const& comp)
 
 std::istream& operator>>(std::istream& in, Rational& rational)
 {
+	int num, den;
 	char slash;
-	in >> rational.num();
+
+	if (!(in >> num))
+	{
+		in.putback(num);
+		in.setstate(std::ios::failbit);
+	}
 
 	if (in >> slash && slash != '/')
 	{
@@ -260,6 +275,13 @@ std::istream& operator>>(std::istream& in, Rational& rational)
 		in.setstate(std::ios::failbit);
 	}
 	
+	if (!(in >> den))
+	{
+		in.putback(den);
+		in.setstate(std::ios::failbit);
+	}
+
+	rational = Rational(num, den);
 	in >> rational.den();
 
 	return in;
@@ -268,6 +290,7 @@ std::istream& operator>>(std::istream& in, Rational& rational)
 std::ostream& operator<<(std::ostream& out,Rational const& rational)
 {
 	out << rational.num() << "/" << rational.den();
+	return out;
 }
 
 int Rational::GCF(int x, int y)

@@ -29,10 +29,10 @@ public:
 	Rational operator =(Rational value);
 
 	//math assign ops
-	Rational operator +=(Rational& addEqual);
-	Rational operator -=(Rational& subEqual);
-	Rational operator *=(Rational& multEqual);
-	Rational operator /=(Rational& divEqual);
+	Rational& operator +=(Rational& addEqual);
+	Rational& operator -=(Rational& subEqual);
+	Rational& operator *=(Rational& multEqual);
+	Rational& operator /=(Rational& divEqual);
 
 	//prefix and postfix incr and decr ops
 	Rational& operator ++();
@@ -48,8 +48,8 @@ public:
 	Rational(int);
 	Rational(double);
 	
-	operator int() const;
-	operator double() const;
+	explicit operator int() const;
+	explicit operator double() const;
 	//IO ops
 
 	//Literal ops in .cpp
